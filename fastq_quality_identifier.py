@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # TODO: convert this file into a fqident package
+# TODO: Rewrite to be more efficient using "from Bio.SeqIO.QualityIO import FastqGeneralIterator"
 
 from Bio import SeqIO
 from copy import copy
