@@ -85,4 +85,5 @@ class FastqQualityIdentifier(object):
 if __name__ == "__main__":
     import sys
     x = FastqQualityIdentifier()
+    print sys.argv[1:]
     print x.detect_encodings(sys.argv[1:])
