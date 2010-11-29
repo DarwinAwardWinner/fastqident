@@ -59,7 +59,7 @@ def detect_fastq_quality_encoding(filename, max_quality = 40, nnuc = 50000):
                 break
     # If no Illumina-encoded quality less than zero has been seen,
     # then eliminate solexa and return illumina.
-    if possible_encodings == set('solexa', 'illumina'):
+    if possible_encodings == set(('solexa', 'illumina')):
         return 'illumina'
     else:
         return 'solexa'
