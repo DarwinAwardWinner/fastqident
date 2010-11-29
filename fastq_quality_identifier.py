@@ -99,7 +99,7 @@ if __name__ == "__main__":
         try:
             from __future__ import print_function
             printfunc = print
-        except ImpoerError:
+        except ImportError:
             def print_function(x):
                 print x
             printfunc = print_function
