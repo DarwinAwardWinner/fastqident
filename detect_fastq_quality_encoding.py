@@ -68,4 +68,4 @@ def detect_fastq_quality_encoding(filename, max_quality = 40, nnuc = 50000):
         return 'solexa'
 
 if __name__ == "__main__":
-    print "fastq-%s" % (detect_fastq_quality_encoding(sys.argv[1], nnuc=5000),)
+    print "fastq-%s" % (detect_fastq_quality_encoding(sys.argv[1]),)
