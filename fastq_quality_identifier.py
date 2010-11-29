@@ -2,7 +2,6 @@
 
 # TODO: convert this file into a fqident package
 
-from pprint import pprint
 from Bio import SeqIO
 from copy import copy
 
@@ -93,5 +92,16 @@ class FastqQualityIdentifier(object):
 
 if __name__ == "__main__":
     import sys
+    try:
+        from pprint import pprint
+        printfunc = pprint
+    except ImportError:
+        try:
+            from __future__ import print_function
+            printfunc = print
+        except ImpoerError:
+            def print_function(x):
+                print x
+            printfunc = print_function
     x = FastqQualityIdentifier()
     pprint(x.detect_encodings(sys.argv[1:]))
