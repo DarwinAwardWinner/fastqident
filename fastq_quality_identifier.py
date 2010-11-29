@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# TODO: convert this file into a fqident package
+
 from pprint import pprint
 from Bio import SeqIO
 from copy import copy
