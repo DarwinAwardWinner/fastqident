@@ -2,10 +2,8 @@
 
 from pprint import pprint
 
-import optparse
+import sys
 from Bio import SeqIO
-import numpy as np
-from la import larry
 
 def detect_fastq_quality_encoding(filename, max_quality = 40, nnuc = 50000):
     '''Given a file name, parse the file as a FASTQ file and attempt
