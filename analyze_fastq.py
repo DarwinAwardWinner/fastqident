@@ -2,7 +2,6 @@
 
 from pprint import pprint
 
-# import optparse
 from Bio import SeqIO
 # import numpy as np
 # from la import larry
@@ -19,9 +18,8 @@ def seqrecord_to_data_triplets(seq_record):
     '''Takes a sequence and returns a list of tuples (BASE, POSITION, QUALITY).
 
     Position is ZERO-based, so you can use it as an array index.'''
-    print seq_record.id
     return izip(seq_record.seq,
-                xrange(0,len(seq_record)),
+                xrange(1,len(seq_record)+1),
                 seq_record.letter_annotations["phred_quality"])
 
 def seqio_to_data_triplets(seqio):
@@ -44,8 +42,16 @@ def quality_historgram_by_position_and_base(seqio, limit = 100000000):
                 break
     return hist
 
+def hist_to_array(hist):
+    def histline_to_list(k,v):
+        a = list(k)
+        a.append(v)
+        return a
+    return [ histline_to_list(k,v) for k,v in sorted(hist.iteritems()) ]
 
 
+def array_to_tsv(array):
+    return "\n".join([ "\t".join([ str(s) for s in x]) for x in array ])
 
 # def parse_options():
 #     parser = optparse.OptionParser(usage='%prog -o OUTFILE FASTQ_FILES...', version='%prog 0.1')
@@ -62,10 +68,31 @@ def quality_historgram_by_position_and_base(seqio, limit = 100000000):
 #     (options, args) = parser.parse_args()
 #     return (options, args)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import sys
-    seqio = fastq_parse_autodetect(sys.argv[1])
-    # for x in seqio_to_data_triplets(seqio, limit=None):
-    #     print x
-    print "Ready"
-    pprint(quality_historgram_by_position_and_base(seqio, limit=None))
+    import plac
+
+    @plac.annotations(
+        # (helptext, kind, abbrev, type, choices, metavar)
+        filename=('The input FASTQ file', 'positional', None, str, None, 'FASTQ-FILE'),
+        limit=('Number of nucleotides to read (0 for unlimited)', 'option', 'l', float, None, 'COUNT'),
+        outfile=('Output file (default stdout)', 'option', 'o', str, None, 'OUTPUT-FILE'),
+        qenc=('Quality Encoding of the input file (default autodetect)', 'option', 'q', str, ['sanger', 'solexa', 'illumina',], 'QENC'))
+    def main(filename, limit=1e9, outfile=sys.stdout, qenc=None):
+        if limit <= 0:
+            limit = None
+        if outfile == '-':
+            outfile = sys.stdout
+        if outfile != sys.stdout:
+            outfile = file(outfile, 'w')
+        if qenc:
+            seqio = SeqIO.parse(filename, 'fastq-%s' % (qenc, ))
+        else:
+            seqio = fastq_parse_autodetect(filename)
+        hist = quality_historgram_by_position_and_base(seqio, limit)
+        hist_array = [ ("base", "position", "quality", "count"), ]
+        hist_array.extend(hist_to_array(hist))
+        hist_tsv = array_to_tsv(hist_array)
+        outfile.write(hist_tsv)
+
+    plac.call(main)
