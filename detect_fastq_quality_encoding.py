@@ -75,7 +75,7 @@ class FastqQualityIdentifier(object):
         else:
             return 'solexa'
 
-    def detect_encodings(filenames):
+    def detect_encodings(self, filenames):
         '''Detect the quality encodings of each of a list of files.
 
         Returns a dict with filenames as keys and encoding styles as
@@ -85,5 +85,4 @@ class FastqQualityIdentifier(object):
 if __name__ == "__main__":
     import sys
     x = FastqQualityIdentifier()
-    print sys.argv[1:]
     print x.detect_encodings(sys.argv[1:])
