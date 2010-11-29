@@ -23,19 +23,24 @@ def seqrecord_to_data_triplets(seq_record):
                 xrange(0,len(seq_record)),
                 seq_record.letter_annotations["phred_quality"])
 
-def seqio_to_data_triplets(seqio):
+def seqio_to_data_triplets(seqio, limit = 1000):
     '''Takes a SeqIO object and returns tuples of (BASE, POS, QUAL).'''
+    count = 0
     for rec in seqio:
+        print "Reading", rec.id
         seq = rec.seq
         qual = rec.letter_annotations["phred_quality"]
         for i in xrange(0,len(seq)):
+            count += 1
             yield (seq[i], i, qual[i])
+            if limit and count >= limit:
+                raise StopIteration()
 
     # return chain.from_iterable([ seqrecord_to_data_triplets(seq) for seq in seqio ])
 
-def quality_historgram_by_position_and_base(seqio, limit = 100000000):
+def quality_historgram_by_position_and_base(seqio, limit = 1000):
     hist = {}
-    triplet_iter = seqio_to_data_triplets(seqio)
+    triplet_iter = seqio_to_data_triplets(seqio, limit=limit)
     if limit:
         count = 0
     for t in triplet_iter:
@@ -70,4 +75,6 @@ def quality_historgram_by_position_and_base(seqio, limit = 100000000):
 if __name__ == "__main__":
     import sys
     seqio = fastq_parse_autodetect(sys.argv[1])
-    pprint(quality_historgram_by_position_and_base(seqio), limit=500)
+    for x in seqio_to_data_triplets(seqio, limit=10000):
+        print x
+    # pprint(quality_historgram_by_position_and_base(seqio), limit=500)
