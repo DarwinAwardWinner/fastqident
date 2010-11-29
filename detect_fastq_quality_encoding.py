@@ -2,68 +2,87 @@
 
 from pprint import pprint
 
-import sys
 from Bio import SeqIO
 
-def detect_fastq_quality_encoding(filename, max_quality = 40, nnuc = 50000):
-    '''Given a file name, parse the file as a FASTQ file and attempt
-    to determine the quality encoding. Returns either "sanger",
-    "solexa", or "illumina".
+class FastqQualityIdentifier(object):
+    def __init__(self, nnuc = 50000, max_quality = 40,
+                 possible_encodings = set(('sanger', 'solexa', 'illumina')),
+                 sanger_min = 33, solexa_min = 59, illumina_min = 64):
+        # For info on the default values, see:
+        # https://secure.wikimedia.org/wikipedia/en/wiki/Fastq#Encoding
+        self.nnuc = nnuc
+        if not self.nnuc or self.nnuc <= 0:
+            self.nnuc = False
+        self.max_quality = max_quality
+        self.possible_encodings = possible_encodings
+        self.sanger_min = sanger_min
+        self.solexa_min = solexa_min
+        self.illumina_min = illumina_min
+        # Computed values
+        self.solexa_threshold = self.solexa_min - self.sanger_min
+        self.illumina_threshold = self.illumina_min - self.sanger_min
 
-    max_quality is the assumed maximum quality value that any
-    nucleotide can have. The default is 40, the anecdotal maximum
-    quality for an Illumina sequencing dataset.
+    def detect_encoding(self, filename):
+        '''Given a file name, parse the file as a FASTQ file and
+        attempt to determine the quality encoding. Returns either
+        "sanger", "solexa", or "illumina".
 
-    nnuc is the number of nucleotides to read. It is assumed that in
-    reading this many nucleotides starting at the beginning of the
-    file, the script will encounter the full range of possible quality
-    values, from which it will then make a descision. The default is
-    50_000.'''
-    # I am aware that this method is very un-general. I don't know how
-    # to make it more general.
+        max_quality is the assumed maximum quality value that any
+        nucleotide can have. The default is 40, the anecdotal maximum
+        quality for an Illumina sequencing dataset.
 
-    # The following are used to eliminate various possibilities.
-    # https://secure.wikimedia.org/wikipedia/en/wiki/Fastq#Encoding
-    # offset_ranges = { sanger: (33,73), solexa: (59,104), illumina: (64,104) }
-    sanger_offset = 33
-    max_quality = 40
-    solexa_min_threshold = 59 - sanger_offset
-    illumina_min_threshold = 64 - sanger_offset
+        nnuc is the number of nucleotides to read. It is assumed that
+        in reading this many nucleotides starting at the beginning of
+        the file, the script will encounter the full range of possible
+        quality values, from which it will then make a descision. The
+        default is 50_000.
 
-    possible_encodings = set(('sanger', 'solexa', 'illumina'))
+        This docstring is for a function that was subsequently
+        rewritten into a class. The documentation is obsolete.'''
+        # I am aware that this method is very un-general. I don't know how
+        # to make it more general.
+        possible_encodings = self.possible_encodings
+        # Min starts high and works it way down. Vice versa for max.
+        min_seen = 128
+        max_seen = 0
+        nuc_count = 0
+        # Any valid illumina-format fastq is also valid sanger, so parsing
+        # as sanger format will always succeed.
+        for record in SeqIO.parse(filename, "fastq-sanger"):
+            qualities = record.letter_annotations["phred_quality"]
+            min_seen = min(min_seen, min(qualities))
+            max_seen = max(max_seen, max(qualities))
+            # Eliminate possibilities
+            if 'sanger' in possible_encodings and max_seen > self.max_quality:
+                possible_encodings.remove('sanger')
+            if 'solexa' in possible_encodings and min_seen < self.solexa_threshold:
+                possible_encodings.remove('solexa')
+            if 'illumina' in possible_encodings and min_seen < self.illumina_threshold:
+                possible_encodings.remove('illumina')
+            # Check if we finished early
+            if len(possible_encodings) == 1:
+                return possible_encodings.pop()
+            elif len(possible_encodings) == 0:
+                raise Exception("Could not identify FASTQ file: eliminated all possible encodings.")
+            if self.nnuc:
+                nuc_count += len(record)
+                if nuc_count > self.nnuc:
+                    break
+        # If no Illumina-encoded quality less than zero has been seen,
+        # then eliminate solexa and return illumina.
+        if min_seen >= illumina_min_threshold:
+            return 'illumina'
+        else:
+            return 'solexa'
 
-    # Min starts high and works it way down. Vice versa for max
-    min_seen = 128 - sanger_offset
-    max_seen = 0
-    nuc_count = 0
-    # Any valid illumina-format fastq is also valid sanger, so parsing
-    # as sanger format will always succeed.
-    for record in SeqIO.parse(filename, "fastq-sanger"):
-        qualities = record.letter_annotations["phred_quality"]
-        min_seen = min(min_seen, min(qualities))
-        max_seen = max(max_seen, max(qualities))
-        # Eliminate possibilities
-        if 'sanger' in possible_encodings and max_seen > max_quality:
-            possible_encodings.remove('sanger')
-        if 'solexa' in possible_encodings and min_seen < solexa_min_threshold:
-            possible_encodings.remove('solexa')
-        if 'illumina' in possible_encodings and min_seen < illumina_min_threshold:
-            possible_encodings.remove('illumina')
-        # Check if we finished early
-        if len(possible_encodings) == 1:
-            return possible_encodings.pop()
-        elif len(possible_encodings) == 0:
-            raise Exception("Could not identify FASTQ file: eliminated all possible encodings.")
-        if nnuc > 0:
-            nuc_count += len(record)
-            if nuc_count > nnuc:
-                break
-    # If no Illumina-encoded quality less than zero has been seen,
-    # then eliminate solexa and return illumina.
-    if min_seen >= illumina_min_threshold:
-        return 'illumina'
-    else:
-        return 'solexa'
+    def detect_encodings(filenames):
+        '''Detect the quality encodings of each of a list of files.
+
+        Returns a dict with filenames as keys and encoding styles as
+        values.'''
+        return dict([ (f, self.detect_encoding(f)) for f in filenames ])
 
 if __name__ == "__main__":
-    print "fastq-%s" % (detect_fastq_quality_encoding(sys.argv[1]),)
+    import sys
+    x = FastqQualityIdentifier()
+    print x.detect_encodings(sys.argv[1:])
