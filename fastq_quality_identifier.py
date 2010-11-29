@@ -104,4 +104,4 @@ if __name__ == "__main__":
                 print x
             printfunc = print_function
     x = FastqQualityIdentifier()
-    pprint(x.detect_encodings(sys.argv[1:]))
+    printfunc(x.detect_encodings(sys.argv[1:]))
