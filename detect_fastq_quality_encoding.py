@@ -37,20 +37,20 @@ def detect_fastq_quality_encoding(filename, max_quality = 40, nnuc = 50000):
     max_seen = 0
     nuc_count = 0
     # Any valid illumina-format fastq is also valid sanger, so parsing
-    # as sanger format will always work.
+    # as sanger format will always succeed.
     for record in SeqIO.parse(filename, "fastq-sanger"):
         qualities = record.letter_annotations["phred_quality"]
         min_seen = min(min_seen, min(qualities))
         max_seen = max(max_seen, max(qualities))
+        # Eliminate possibilities
         if 'sanger' in possible_encodings and max_seen > max_quality:
             possible_encodings.remove('sanger')
         if 'solexa' in possible_encodings and min_seen < solexa_min_threshold:
             possible_encodings.remove('solexa')
         if 'illumina' in possible_encodings and min_seen < illumina_min_threshold:
             possible_encodings.remove('illumina')
-
+        # Check if we finished early
         if len(possible_encodings) == 1:
-            print "Min: %s; Max: %s" % (min_seen + 33, max_seen + 33)
             return possible_encodings.pop()
         elif len(possible_encodings) == 0:
             raise Exception("Could not identify FASTQ file: eliminated all possible encodings.")
@@ -58,8 +58,6 @@ def detect_fastq_quality_encoding(filename, max_quality = 40, nnuc = 50000):
             nuc_count += len(record)
             if nuc_count > nnuc:
                 break
-
-    print "Min: %s; Max: %s" % (min_seen + 33, max_seen + 33)
     # If no Illumina-encoded quality less than zero has been seen,
     # then eliminate solexa and return illumina.
     if min_seen >= illumina_min_threshold:
