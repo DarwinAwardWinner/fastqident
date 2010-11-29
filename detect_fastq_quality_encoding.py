@@ -70,7 +70,7 @@ class FastqQualityIdentifier(object):
                     break
         # If no Illumina-encoded quality less than zero has been seen,
         # then eliminate solexa and return illumina.
-        if min_seen >= illumina_min_threshold:
+        if min_seen >= self.illumina_threshold:
             return 'illumina'
         else:
             return 'solexa'
