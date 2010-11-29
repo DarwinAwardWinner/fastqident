@@ -15,7 +15,7 @@ class FastqQualityIdentifier(object):
         if not self.nnuc or self.nnuc <= 0:
             self.nnuc = False
         self.max_quality = max_quality
-        self.possible_encodings = possible_encodings
+        self.possible_encodings = set(possible_encodings)
         self.sanger_min = sanger_min
         self.solexa_min = solexa_min
         self.illumina_min = illumina_min
