@@ -20,8 +20,8 @@ def seqrecord_to_data_triplets(seq_record):
 
     Position is ZERO-based, so you can use it as an array index.'''
     return izip(seq_record.seq,
-               xrange(0:len(seq_record)),
-               seq_record.letter_annotations["phred_quality"])
+                xrange(0,len(seq_record)),
+                seq_record.letter_annotations["phred_quality"])
 
 def seqio_to_data_triplets(seqio):
     '''Takes a SeqIO object and returns tuples of (BASE, POS, QUAL).'''
