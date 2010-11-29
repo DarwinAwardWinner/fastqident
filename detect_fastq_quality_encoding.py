@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from pprint import pprint
-
 from Bio import SeqIO
+from copy import copy
 
 class FastqQualityIdentifier(object):
     def __init__(self, nnuc = 50000, max_quality = 40,
@@ -41,7 +41,7 @@ class FastqQualityIdentifier(object):
         rewritten into a class. The documentation is obsolete.'''
         # I am aware that this method is very un-general. I don't know how
         # to make it more general.
-        possible_encodings = self.possible_encodings
+        possible_encodings = copy(self.possible_encodings)
         # Min starts high and works it way down. Vice versa for max.
         min_seen = 128
         max_seen = 0
@@ -63,7 +63,7 @@ class FastqQualityIdentifier(object):
             if len(possible_encodings) == 1:
                 return possible_encodings.pop()
             elif len(possible_encodings) == 0:
-                raise Exception("Could not identify FASTQ file: eliminated all possible encodings.")
+                raise Exception("Could not identify FASTQ file %s: eliminated all possible encodings." % (filename,))
             if self.nnuc:
                 nuc_count += len(record)
                 if nuc_count > self.nnuc:
@@ -75,12 +75,19 @@ class FastqQualityIdentifier(object):
         else:
             return 'solexa'
 
+    def _detect_encoding_safe(self, filename):
+        '''Same as detect_encoding, but returns None on IOError.'''
+        try:
+            return self.detect_encoding(filename)
+        except IOError:
+            return None
+
     def detect_encodings(self, filenames):
         '''Detect the quality encodings of each of a list of files.
 
         Returns a dict with filenames as keys and encoding styles as
         values.'''
-        return dict([ (f, self.detect_encoding(f)) for f in filenames ])
+        return dict([ (f, self._detect_encoding_safe(f)) for f in filenames ])
 
 if __name__ == "__main__":
     import sys
