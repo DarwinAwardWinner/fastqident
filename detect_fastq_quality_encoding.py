@@ -50,6 +50,7 @@ def detect_fastq_quality_encoding(filename, max_quality = 40, nnuc = 50000):
             possible_encodings.remove('illumina')
 
         if len(possible_encodings) == 1:
+            print "Min: %s; Max: %s" % (min_seen + 33, max_seen + 33)
             return possible_encodings.pop()
         elif len(possible_encodings) == 0:
             raise Exception("Could not identify FASTQ file: eliminated all possible encodings.")
@@ -57,6 +58,8 @@ def detect_fastq_quality_encoding(filename, max_quality = 40, nnuc = 50000):
             nuc_count += len(record)
             if nuc_count > nnuc:
                 break
+
+    print "Min: %s; Max: %s" % (min_seen + 33, max_seen + 33)
     # If no Illumina-encoded quality less than zero has been seen,
     # then eliminate solexa and return illumina.
     if possible_encodings == set(('solexa', 'illumina')):
