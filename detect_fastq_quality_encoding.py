@@ -62,10 +62,10 @@ def detect_fastq_quality_encoding(filename, max_quality = 40, nnuc = 50000):
     print "Min: %s; Max: %s" % (min_seen + 33, max_seen + 33)
     # If no Illumina-encoded quality less than zero has been seen,
     # then eliminate solexa and return illumina.
-    if possible_encodings == set(('solexa', 'illumina')):
+    if min_seen >= illumina_min_threshold:
         return 'illumina'
     else:
         return 'solexa'
 
 if __name__ == "__main__":
-    print "fastq-%s" % (detect_fastq_quality_encoding(sys.argv[1]),)
+    print "fastq-%s" % (detect_fastq_quality_encoding(sys.argv[1], nnuc=5000),)
