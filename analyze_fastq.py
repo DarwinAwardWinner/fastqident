@@ -25,7 +25,13 @@ def seqrecord_to_data_triplets(seq_record):
 
 def seqio_to_data_triplets(seqio):
     '''Takes a SeqIO object and returns tuples of (BASE, POS, QUAL).'''
-    return chain.from_iterable([ seqrecord_to_data_triplets(seq) for seq in seqio ])
+    for rec in seqio:
+        seq = rec.seq
+        qual = rec.letter_annotations["phred_quality"]
+        for i in xrange(0,len(seq)):
+            yield (seq[i], i, qual[i])
+
+    # return chain.from_iterable([ seqrecord_to_data_triplets(seq) for seq in seqio ])
 
 def quality_historgram_by_position_and_base(seqio, limit = 100000000):
     hist = {}
