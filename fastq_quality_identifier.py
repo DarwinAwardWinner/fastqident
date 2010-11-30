@@ -6,23 +6,24 @@
 from __future__ import print_function
 from Bio import SeqIO
 from copy import copy
+from itertools import islice
 
 class FastqQualityIdentifier(object):
-    def __init__(self, nnuc = 50000, max_quality = 40, initskip = 100, midskip = 4,
+    def __init__(self, max_quality = 40, nnuc = 50000, start = 0, skip = 4,
                  possible_encodings = set(('sanger', 'solexa', 'illumina')),
                  sanger_min = 33, solexa_min = 59, illumina_min = 64):
         # For info on the default values, see:
         # https://secure.wikimedia.org/wikipedia/en/wiki/Fastq#Encoding
         self.nnuc = nnuc
         if not self.nnuc or self.nnuc <= 0:
-            self.nnuc = False
+            self.nnuc = None
         self.max_quality = max_quality
         self.possible_encodings = set(possible_encodings)
         self.sanger_min = sanger_min
         self.solexa_min = solexa_min
         self.illumina_min = illumina_min
-        self.initskip = initskip
-        self.midskip = midskip
+        self.start = start
+        self.skip = skip
         # Computed values
         self.solexa_threshold = self.solexa_min - self.sanger_min
         self.illumina_threshold = self.illumina_min - self.sanger_min
@@ -54,12 +55,10 @@ class FastqQualityIdentifier(object):
         seq_count = 0
         # Any valid illumina-format fastq is also valid sanger, so parsing
         # as sanger format will always succeed.
-        for record in SeqIO.parse(filename, "fastq-sanger"):
+        seqio = SeqIO.parse(filename, "fastq-sanger")
+        seqio_slice = islice(seqio, self.start, None, self.skip)
+        for record in seqio_slice:
             seq_count += 1
-            if seq_count <= self.initskip:
-                continue
-            elif (seq_count - self.initskip) % self.midskip != 1:
-                continue
             qualities = record.letter_annotations["phred_quality"]
             min_seen = min(min_seen, min(qualities))
             max_seen = max(max_seen, max(qualities))
