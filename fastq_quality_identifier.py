@@ -8,7 +8,7 @@ from Bio import SeqIO
 from copy import copy
 
 class FastqQualityIdentifier(object):
-    def __init__(self, nnuc = 50000, max_quality = 40,
+    def __init__(self, nnuc = 50000, max_quality = 40, initskip = 100, midskip = 4,
                  possible_encodings = set(('sanger', 'solexa', 'illumina')),
                  sanger_min = 33, solexa_min = 59, illumina_min = 64):
         # For info on the default values, see:
@@ -21,6 +21,8 @@ class FastqQualityIdentifier(object):
         self.sanger_min = sanger_min
         self.solexa_min = solexa_min
         self.illumina_min = illumina_min
+        self.initskip = initskip
+        self.midskip = midskip
         # Computed values
         self.solexa_threshold = self.solexa_min - self.sanger_min
         self.illumina_threshold = self.illumina_min - self.sanger_min
@@ -49,9 +51,15 @@ class FastqQualityIdentifier(object):
         min_seen = 128
         max_seen = 0
         nuc_count = 0
+        seq_count = 0
         # Any valid illumina-format fastq is also valid sanger, so parsing
         # as sanger format will always succeed.
         for record in SeqIO.parse(filename, "fastq-sanger"):
+            seq_count += 1
+            if seq_count <= self.initskip:
+                continue
+            elif (seq_count - self.initskip) % self.midskip != 1:
+                continue
             qualities = record.letter_annotations["phred_quality"]
             min_seen = min(min_seen, min(qualities))
             max_seen = max(max_seen, max(qualities))
