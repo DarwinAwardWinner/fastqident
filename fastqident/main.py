@@ -2,7 +2,7 @@ from __future__ import print_function
 
 try:
     import plac
-    from placsupport import print_argument_error
+    from placsupport import argument_error
     from placsupport.types import *
 except ImportError, e:
     print("You must install the plac and placsupport modules to use the fastqident command-line script.")
@@ -37,12 +37,12 @@ def main(max_quality = 40,
          *fastq):
     """Detect the quality encoding of FASTQ sequence files."""
     if not allow_empty_file_list and len(fastq) < 1:
-        print_argument_error(main, 'Need at least one fastq file to operate on')
+        argument_error('Need at least one fastq file to operate on')
     possible_encodings = set(map(str.strip, possible_encodings.split(",")))
     known_encodings = set(('sanger', 'solexa', 'illumina'))
     unknown_encodings = possible_encodings.difference(known_encodings)
     if unknown_encodings:
-        print_argument_error(main, 'The only known encodings are sanger, solexa, and illumina. You supplied the following unknown encodings:\n\n%s' % (",".join(sorted(unknown_encodings))))
+        argument_error('The only known encodings are sanger, solexa, and illumina. You supplied the following unknown encodings:\n\n%s' % (",".join(sorted(unknown_encodings))))
     if type(sanger_min) == str:
         sanger_min = ord(sanger_min)
     if type(solexa_min) == str:
