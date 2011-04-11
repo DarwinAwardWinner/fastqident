@@ -8,6 +8,11 @@ setup(
     name = "fastqident",
     version = "0.1dev",
     packages = find_packages(),
+    entry_points = {
+        'console_scripts': [
+            'fastqident = fastqident.main.plac_call_main',
+        ],
+    }
 
     # metadata for upload to PyPI
     author = "Ryan C. Thompson",
