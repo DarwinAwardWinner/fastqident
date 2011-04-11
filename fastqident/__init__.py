@@ -2,7 +2,6 @@
 
 # TODO: Rewrite to be more efficient using "from Bio.SeqIO.QualityIO import FastqGeneralIterator"
 
-from __future__ import print_function
 from Bio import SeqIO
 from copy import copy
 from itertools import islice

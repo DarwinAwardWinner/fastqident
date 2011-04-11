@@ -1,9 +1,11 @@
+from __future__ import print_function
+
 try:
     import plac
     from placsupport import print_argument_error
     from placsupport.types import *
 except ImportError, e:
-    print "You must install the plac module to use the fastqident command-line script."
+    print("You must install the plac and placsupport modules to use the fastqident command-line script.")
     raise e
 
 # Entry point
