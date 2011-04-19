@@ -3,9 +3,14 @@
 The FASTQ sequence format stores biological sequences, along with
 sequencing quality values for each element in each sequence.
 Unfortunately, different sources encode the quality values in
-different ways. The purpose of this module is to make an educated
-guess at which encoding style was used for a particular fastq file, so
-you don't have to.
+different ways. The different encodings are sparsely documented, and
+telling them apart is
+[confusing](http://en.wikipedia.org/wiki/FASTQ_format#Encoding),
+especially because many files are techincally valid in multiple
+encodings. However, practice it is generally possible to make a good
+guess as to which encoding was used. The purpose of this module is to
+do the guessing for you. It should get the answer right as long as the
+question isn't too hard.
 
 ## Usage
 
