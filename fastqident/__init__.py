@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-# TODO: Rewrite to be more efficient using "from Bio.SeqIO.QualityIO import FastqGeneralIterator"
+# TODO: Rewrite to be more efficient using "from Bio.SeqIO.QualityIO
+# import FastqGeneralIterator"
 
 from Bio import SeqIO
 from copy import copy
@@ -42,7 +43,7 @@ class FastqQualityIdentifier(object):
         default is 50_000.
 
         This docstring is for a function that was subsequently
-        rewritten into a class. The documentation is obsolete.'''
+        rewritten into a class, so it is now misplaced.'''
         # I am aware that this method is very un-general. I don't know how
         # to make it more general.
         possible_encodings = copy(self.possible_encodings)
