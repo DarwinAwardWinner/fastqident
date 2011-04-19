@@ -72,7 +72,7 @@ class FastqQualityIdentifier(object):
             if len(possible_encodings) == 1:
                 return possible_encodings.pop()
             elif len(possible_encodings) == 0:
-                raise Exception("Could not identify FASTQ file %s: eliminated all possible encodings." % (filename,))
+                raise ValueError("Could not identify FASTQ file %s: eliminated all possible encodings." % (filename,))
             if self.nnuc:
                 nuc_count += len(record)
                 if nuc_count > self.nnuc:
@@ -85,10 +85,10 @@ class FastqQualityIdentifier(object):
             return 'solexa'
 
     def _detect_encoding_safe(self, filename):
-        '''Same as detect_encoding, but returns None on IOError.'''
+        '''Same as detect_encoding, but returns None on error.'''
         try:
             return self.detect_encoding(filename)
-        except IOError:
+        except:
             return None
 
     def detect_encodings(self, filenames):
