@@ -28,22 +28,9 @@ class FastqQualityIdentifier(object):
         self.illumina_threshold = self.illumina_min - self.sanger_min
 
     def detect_encoding(self, filename):
-        '''Given a file name, parse the file as a FASTQ file and
-        attempt to determine the quality encoding. Returns either
-        "sanger", "solexa", or "illumina".
+        '''Given a fastq file name, guess the quality encoding
 
-        max_quality is the assumed maximum quality value that any
-        nucleotide can have. The default is 40, the anecdotal maximum
-        quality for an Illumina sequencing dataset.
-
-        nnuc is the number of nucleotides to read. It is assumed that
-        in reading this many nucleotides starting at the beginning of
-        the file, the script will encounter the full range of possible
-        quality values, from which it will then make a descision. The
-        default is 50_000.
-
-        This docstring is for a function that was subsequently
-        rewritten into a class, so it is now misplaced.'''
+        Returns either "sanger", "solexa", or "illumina".'''
         # I am aware that this method is very un-general. I don't know how
         # to make it more general.
         possible_encodings = copy(self.possible_encodings)
