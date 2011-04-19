@@ -2,6 +2,7 @@
 # with its associated argument parsing infrastructure.
 
 from __future__ import print_function
+from fastqident import FastqQualityIdentifier
 
 try:
     import plac
@@ -28,14 +29,14 @@ def plac_call_main():
     illumina_min=('Minimum ASCII value of Illumina-encoded qualities', 'option', 'l', positive_int),
     allow_empty_file_list=('Do not produce an error if no fastq files are passed on the command line. This is potentially useful for running in a pipeline.', 'flag','z'),
     )
-def main(nnuc = 50000,
+def main(max_quality = 40,
+         nnuc = 50000,
          initskip = 0,
          skip = 4,
          possible_encodings = 'sanger,solexa,illumina',
          sanger_min = 33,
          solexa_min = 59,
          illumina_min = 64,
-         max_quality = 40,
          allow_empty_file_list=False,
          *fastq):
     """Detect the quality encoding of FASTQ sequence files."""
