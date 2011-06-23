@@ -8,9 +8,10 @@ telling them apart is
 [confusing](http://en.wikipedia.org/wiki/FASTQ_format#Encoding),
 especially because many files are techincally valid in multiple
 encodings. However, in practice it is generally possible to make a
-good guess as to which encoding was used. The purpose of this module
-is to do the guessing for you. It should get the answer right as long
-as the question isn't too hard.
+good guess as to which encoding was used based on the observed range
+of ASCII character. The purpose of this module is to do this guessing
+for you. It should get the answer right as long as the question isn't
+too hard.
 
 ## Installation
 
@@ -53,3 +54,11 @@ Use the identifier:
     for fname, fenc in file_encodings:
         print "%s has quality encoding %s" % (fname, fenc)
 
+## Errata
+
+fastqident assumes that the sequences near the start of the file will
+provide a reasonable sample of the range of quality values in the
+whole file. If this assumption fails, then fastqident may fail to
+correctly identify things. You can increase `-n`, `-i`, and `-s` from
+their default values to take a larger sample across a greater fraction
+of the fastq file, at the cost of taking longer.
