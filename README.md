@@ -62,3 +62,5 @@ whole file. If this assumption fails, then fastqident may fail to
 correctly identify things. You can increase `-n`, `-i`, and `-s` from
 their default values to take a larger sample across a greater fraction
 of the fastq file, at the cost of taking longer.
+
+Examples of misidentified files are welcome.
