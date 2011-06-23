@@ -12,6 +12,13 @@ good guess as to which encoding was used. The purpose of this module
 is to do the guessing for you. It should get the answer right as long
 as the question isn't too hard.
 
+## Installation
+
+fastqident is distributed as a standard Python package. You can download the tarball here: https://github.com/DarwinAwardWinner/fastqident/tarball/master
+
+Simply install it your normal Python package installer. Probably `pip`
+or `easy_install` or setup.py.
+
 ## Usage
 
 ### From the command line
