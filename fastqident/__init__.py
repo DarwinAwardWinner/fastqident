@@ -84,3 +84,10 @@ class FastqQualityIdentifier(object):
         Returns a dict with filenames as keys and encoding styles as
         values.'''
         return dict((f, self._detect_encoding_safe(f)) for f in filenames )
+
+__default_identifier = None
+
+def detect_encoding(filename):
+    if __default_identifier is None:
+        __default_identifier = FastqQualityIdentifier()
+    return __default_identifier.detect_encoding(filename)
