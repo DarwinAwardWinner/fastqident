@@ -42,7 +42,7 @@ class FastqQualityIdentifier(object):
         # Any valid illumina-format fastq is also valid sanger, so parsing
         # as sanger format will always succeed.
         seqio = SeqIO.parse(filename, "fastq-sanger")
-        seqio_slice = islice(seqio, self.start, None, self.skip)
+        seqio_slice = islice(seqio, self.start, None, self.skip + 1)
         for record in seqio_slice:
             seq_count += 1
             qualities = record.letter_annotations["phred_quality"]
