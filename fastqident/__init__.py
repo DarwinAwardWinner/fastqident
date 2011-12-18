@@ -52,7 +52,7 @@ class FastqQualityIdentifier(object):
             if 'sanger' in possible_encodings and max_seen > self.max_quality:
                 possible_encodings.remove('sanger')
             if 'solexa' in possible_encodings and min_seen < self.solexa_threshold:
-                possible_encodings.remove('solexa')
+                return 'sanger'
             if 'illumina' in possible_encodings and min_seen < self.illumina_threshold:
                 possible_encodings.remove('illumina')
             # Check if we finished early
