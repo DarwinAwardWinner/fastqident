@@ -71,19 +71,21 @@ class FastqQualityIdentifier(object):
         else:
             return 'solexa'
 
-    def _detect_encoding_safe(self, filename):
-        '''Same as detect_encoding, but returns None on error.'''
+    def detect_encoding_safe(self, filename):
+        '''Same as detect_encoding, but does not raise Exceptions.
+
+        Instead, it can return "INVALID".'''
         try:
             return self.detect_encoding(filename)
-        except:
-            return None
+        except ValueError, e:
+            return "INVALID"
 
     def detect_encodings(self, filenames):
         '''Detect the quality encodings of each of a list of files.
 
         Returns a dict with filenames as keys and encoding styles as
         values.'''
-        return dict((f, self._detect_encoding_safe(f)) for f in filenames )
+        return dict((f, self.detect_encoding_safe(f)) for f in filenames )
 
 __default_identifier = None
 
