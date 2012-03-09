@@ -15,10 +15,15 @@ too hard.
 
 ## Installation
 
-fastqident is distributed as a standard Python package. You can download the tarball here: https://github.com/DarwinAwardWinner/fastqident/tarball/master
+fastqident is distributed as a standard Python package. You can
+download the tarball here:
+https://github.com/DarwinAwardWinner/fastqident/tarball/master
 
 Simply install it your normal Python package installer. Probably `pip`
-or `easy_install` or setup.py.
+or `easy_install` or setup.py. Something like this:
+
+    wget -O fastqident.tar.gz https://github.com/DarwinAwardWinner/fastqident/tarball/master
+    pip install fastqident.tar.gz
 
 ## Usage
 
