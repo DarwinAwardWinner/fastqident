@@ -76,6 +76,17 @@ those same three methods as module-level functions:
 
 ## Errata
 
+### Illumina's many versions
+
+There are at least three different versions of "Illumina" fastq files
+that differ only slightly. I believe they are too similar to reliably
+distinguish based purely on the range of ASCII characters present in
+the quality strings, so this module makes no attempt to do so. It
+simply returns `'illumina'`, without trying to be any more specific
+than that..
+
+### Assumptions
+
 fastqident assumes that the sequences near the start of the file will
 provide a reasonable sample of the range of quality values in the
 whole file. If this assumption fails, then fastqident may fail to
