@@ -60,6 +60,15 @@ code using them:
     for fname, fenc in file_encodings:
         print "%s has quality encoding %s" % (fname, fenc)
 
+Note that if you just want the default settings, you can also import
+those same three methods as module-level functions:
+
+    from fastqident import detect_encoding, detect_encoding_safe, detect_encodings
+
+    filename = "read1.fastq"
+    file_encoding = detect_encoding(filename)
+    print "%s has quality encoding %s" % (filename, file_encodings)
+
 ## Errata
 
 fastqident assumes that the sequences near the start of the file will
