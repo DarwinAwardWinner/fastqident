@@ -45,7 +45,9 @@ Create an identifier with custom options:
 
     id_custom = FastqQualityIdentifier(max_quality=50, nnuc=5000, start=50, skip=50)
 
-Use the identifier:
+The identifier class supplies three methods: `detect_encoding`,
+`detect_encoding_safe`, and `detect_encodings`. Here is some example
+code using them:
 
     # Identify a single fastq file (returns a string)
     filename = "read1.fastq"
