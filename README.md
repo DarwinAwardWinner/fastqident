@@ -33,6 +33,10 @@ each. Usage:
 
 ### From python code
 
+Import the constructor:
+
+    from fastqident import FastqQualityIdentifier
+
 Create an identifier with default values:
 
     id_default = FastqQualityIdentifier()
