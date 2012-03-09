@@ -87,9 +87,8 @@ class FastqQualityIdentifier(object):
         values.'''
         return dict((f, self.detect_encoding_safe(f)) for f in filenames )
 
-__default_identifier = None
+__default_identifier = FastqQualityIdentifier()
 
-def detect_encoding(filename):
-    if __default_identifier is None:
-        __default_identifier = FastqQualityIdentifier()
-    return __default_identifier.detect_encoding(filename)
+detect_encoding = __default_identifier.detect_encoding
+detect_encoding_safe = __default_identifier.detect_encoding_safe
+detect_encodings = __default_identifier.detect_encodings
