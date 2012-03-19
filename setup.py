@@ -22,4 +22,5 @@ setup(
     keywords = ("biopython", "bioinformatics", "fastq", "sequencing"),
     #url = "http://example.com/HelloWorld/",   # project home page, if any
     long_description=read_file('README.md'),
+    requires = ('plac', 'placsupport'),
 )
