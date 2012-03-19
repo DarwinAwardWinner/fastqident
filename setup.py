@@ -22,5 +22,9 @@ setup(
     keywords = ("biopython", "bioinformatics", "fastq", "sequencing"),
     #url = "http://example.com/HelloWorld/",   # project home page, if any
     long_description=read_file('README.md'),
-    requires = ('plac', 'placsupport'),
+    url='https://github.com/DarwinAwardWinner/fastqident/'
+
+    # Dependencies
+    install_requires = [],
+    requires = ['plac', 'placsupport'],
 )
