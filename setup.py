@@ -20,7 +20,6 @@ setup(
     description = "Guess the quality encoding system used by FASTQ sequence files.",
     license = "BSD",
     keywords = ("biopython", "bioinformatics", "fastq", "sequencing"),
-    #url = "http://example.com/HelloWorld/",   # project home page, if any
     long_description=read_file('README.md'),
     url='https://github.com/DarwinAwardWinner/fastqident/',
 
