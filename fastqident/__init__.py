@@ -6,6 +6,8 @@
 from Bio import SeqIO
 from copy import copy
 from itertools import islice
+import gzip
+import re
 
 class FastqQualityIdentifier(object):
     def __init__(self, max_quality = 40, nnuc = 50000, start = 0, skip = 4,
@@ -39,9 +41,16 @@ class FastqQualityIdentifier(object):
         max_seen = 0
         nuc_count = 0
         seq_count = 0
+
+        # If fastq filename ends in ".gz", load as gzipped file
+        if re.match(".*\.gz$", filename):
+            fastq_handle = gzip.open(filename)
+        else:
+            fastq_handle = open(filename)
+        
         # Any valid illumina-format fastq is also valid sanger, so parsing
         # as sanger format will always succeed.
-        seqio = SeqIO.parse(filename, "fastq-sanger")
+        seqio = SeqIO.parse(fastq_handle, "fastq-sanger")
         seqio_slice = islice(seqio, self.start, None, self.skip + 1)
         for record in seqio_slice:
             seq_count += 1
